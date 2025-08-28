@@ -1,0 +1,64 @@
+let display = document.getElementById('display');
+let currentInput = '';
+
+function appendNumber(number) {
+  currentInput += number;
+  display.value = currentInput;
+}
+
+function appendOperator(operator) {
+  if (currentInput === '' || /[+\-*/]$/.test(currentInput)) return;
+  currentInput += operator;
+  display.value = currentInput;
+}
+
+function appendDot() {
+  let parts = currentInput.split(/[+\-*/]/);
+  let lastPart = parts[parts.length - 1];
+  if (!lastPart.includes('.')) {
+    currentInput += '.';
+    display.value = currentInput;
+  }
+}
+
+function clearDisplay() {
+  currentInput = '';
+  display.value = '';
+}
+
+function calculate() {
+  try {
+    currentInput = eval(currentInput).toString();
+    display.value = currentInput;
+  } catch (error) {
+    display.value = 'Error';
+    currentInput = '';
+  }
+}
+
+function handleMemory(action) {
+  if (action === "MC") memory = 0;
+  else if (action === "MR") result.value += memory;
+  else if (action === "M+") memory += parseFloat(result.value) || 0;
+  else if (action === "M-") memory -= parseFloat(result.value) || 0;
+}
+
+
+document.addEventListener('keydown', (event) => {
+  const key = event.key;
+  if (!isNaN(key)) {
+    appendNumber(key);
+  } else if (["+", "-", "*", "/"].includes(key)) {
+    appendOperator(key);
+  } else if (key === '.') {
+    appendDot();
+  } else if (key === 'Enter' || key === '=') {
+    event.preventDefault();
+    calculate();
+  } else if (key === 'Backspace') {
+    currentInput = currentInput.slice(0, -1);
+    display.value = currentInput;
+  } else if (key.toLowerCase() === 'c') {
+    clearDisplay();
+  }
+});
